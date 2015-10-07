@@ -18,6 +18,7 @@ cameron *at* udacity *dot* com
 
 // As you may have realized, this website randomly generates pizzas.
 // Here are arrays of all possible pizza ingredients.
+'use strict';
 var pizzaIngredients = {};
 pizzaIngredients.meats = [
   "Pepperoni",
@@ -427,35 +428,31 @@ var resizePizzas = function(size) {
 
 //new less stupid fucntion
 //on mobile the pizza sizes screw up because of the different sizes of the ingrediants list. if you want to fix that you need to make the boxes for the pizza ingredients a specific size
+
+//*********modified on the chromebook
 function updatePizzaSize (sizeInt){
   //requestAnimationFrame(updatePizzaSize);
   var smallwidth=25;
   var medwidth=33.33;
   var largewidth=50;
-
   var pizzaHolder = document.getElementsByClassName("randomPizzaContainer");
+  var pizzaLength= pizzaHolder.length; //put the length outside the loops
 
   if (sizeInt===1){
-    //console.log("small");
-    //console.log(sizeInt);
-    for (var i = 0; i < pizzaHolder.length; i++) {
+    for (var i = 0; i < pizzaLength; i++) {
       pizzaHolder[i].style.width = smallwidth +"%";
     }
   }
   else if (sizeInt===2){
-    //console.log("med");
-    //console.log(sizeInt);
-    for (var i = 0; i <pizzaHolder.length; i++) {
+    for (var i = 0; i <pizzaLength; i++) {
       pizzaHolder[i].style.width = medwidth + "%";
     }
   }
   else if (sizeInt===3){
-    //console.log("large");
-    //console.log(sizeInt);
-    for (var i = 0; i < pizzaHolder.length; i++) {
+    for (var i = 0; i < pizzaLength; i++) {
       pizzaHolder[i].style.width = largewidth +"%";
     }
-  } 
+  }
 }
 updatePizzaSize();
 
@@ -469,8 +466,11 @@ updatePizzaSize();
 window.performance.mark("mark_start_generating"); // collect timing data
 
 // This for-loop actually creates and appends all of the pizzas when the page loads
+//moved pizzasDiv outside here
+
+var pizzasDiv = document.getElementById("randomPizzas");
+//changed this around
 for (var i = 2; i < 100; i++) {
-  var pizzasDiv = document.getElementById("randomPizzas");
   pizzasDiv.appendChild(pizzaElementGenerator(i));
 }
 
@@ -494,16 +494,16 @@ function logAverageFrame(times) {   // times is the array of User Timing measure
   console.log("Average time to generate last 10 frames: " + sum / 10 + "ms");
 }
 
-//comment this shit up before turn in
-
-
+//use comments from other one
+//remember for both functions we ALSO moved the lenght of the ID outside of the loop conditions to make it run faster
 function updatePositions() {
   frame++; //frames
   window.performance.mark("mark_start_frame"); //timing API
   var items = document.getElementsByClassName('mover'); //select all items with the mover class
   var scrollInfo = (document.body.scrollTop/1250);
+  var itemsLength = items.length;
   
-  for (var i = 0; i < items.length; i++) {
+  for (var i = 0; i < itemsLength; i++) {
     items[i].style.left = items[i].basicLeft + 100 * (Math.sin(scrollInfo) + (i % 5)) +'px'; //setting a px value into a style
   }
     
@@ -517,26 +517,32 @@ function updatePositions() {
   }
 }
 
-
-
 // runs updatePositions on scroll. This seems fine
 window.addEventListener('scroll', updatePositions);
 
-// Generates the sliding pizzas when the page loads.
+//Here I moved the document call outside of the loop, as well as some variable defining.
+//Also generated a method to dynamically generate a number of moving pizzas based on the clients browser size based on the number of columns x the number
+//of rows(after deciding each row should be about 250px)
 document.addEventListener('DOMContentLoaded', function() {
   var cols = 8;
   var s = 256;
-  //to dynamically generate pizzas, base pizza #s on window size
-  for (var i = 0; i < 24; i++) {
-    var elem = document.createElement('img');
+  var screenHeight= window.screen.height;
+  var rows = screenHeight/ 250;
+  var numberPizzas = rows*cols;
+  console.log(numberPizzas);
+  var elem;
+  var movingPizzas= document.getElementById("movingPizzas1");
+  
+  for (var i = 0; i < numberPizzas; i++) {
+    elem = document.createElement('img');
     elem.className = 'mover';
     elem.src = "images/pizza.png";
     elem.style.height = "100px";
     elem.style.width = "73.333px";
     elem.basicLeft = (i % cols) * s;
     elem.style.top = (Math.floor(i / cols) * s) + 'px';
-    document.querySelector("#movingPizzas1").appendChild(elem);
+    movingPizzas.appendChild(elem);
   }
   updatePositions();
-  //here is where i would spawn the web worker....
 });
+
