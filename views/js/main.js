@@ -1,3 +1,4 @@
+  //write comments a the top of the page/above the function/inline if its a bit of confusing code
   /*
 Welcome to the 60fps project! Your goal is to make Cam's Pizzeria website run
 jank-free at 60 frames per second.
