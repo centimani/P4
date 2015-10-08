@@ -400,12 +400,11 @@ var pizzaElementGenerator = function(i) {
   return pizzaContainer;
 };
 
-//update this one too
+
 // resizePizzas(size) is called when the slider in the "Our Pizzas" section of the website moves.
 var resizePizzas = function(size) {
   window.performance.mark("mark_start_resize");   // User Timing API function
 
-  // Changes the value for the size of the pizza above the slider
   function changeSliderLabel(size) {
     switch(size) {
       case "1":
@@ -425,14 +424,14 @@ var resizePizzas = function(size) {
     }
   }
 
-  changeSliderLabel(size); //layout
+  changeSliderLabel(size);
 
-//new less stupid fucntion
-//on mobile the pizza sizes screw up because of the different sizes of the ingrediants list. if you want to fix that you need to make the boxes for the pizza ingredients a specific size
+//resizePizzas before was incredibly redudant. It called several functions that did relative sizing comparisons before resizing.
+//I deleted those and wrote updatePizzaSize which uses pre defined pizza sizes based on the sizes from Cameron's default page. Then I saved the resizing pizza containers out to reduce layout calls.
+//Also saved out the length of an array to reduce processing. 
+//TODO: on mobile the pizza sizes screw up because of the different sizes of the ingrediants list. if you want to fix that you need to make the boxes for the pizza ingredients a specific size
 
-//*********modified on the chromebook
 function updatePizzaSize (sizeInt){
-  //requestAnimationFrame(updatePizzaSize);
   var smallwidth=25;
   var medwidth=33.33;
   var largewidth=50;
@@ -467,10 +466,10 @@ updatePizzaSize();
 window.performance.mark("mark_start_generating"); // collect timing data
 
 // This for-loop actually creates and appends all of the pizzas when the page loads
-//moved pizzasDiv outside here
+// Moved pizzasDiv outside here so we had less layout calls. 
 
 var pizzasDiv = document.getElementById("randomPizzas");
-//changed this around
+
 for (var i = 2; i < 100; i++) {
   pizzasDiv.appendChild(pizzaElementGenerator(i));
 }
@@ -495,8 +494,10 @@ function logAverageFrame(times) {   // times is the array of User Timing measure
   console.log("Average time to generate last 10 frames: " + sum / 10 + "ms");
 }
 
-//use comments from other one
-//remember for both functions we ALSO moved the lenght of the ID outside of the loop conditions to make it run faster
+//updatePositions was another major function that needed editing. I primarily saved variables and moved them out of the loop to make sure there were less layout calls. 
+//I moved the moving pizza array out of the loop and I also saved the Scrolling Information to a static variable so it didn't need to be recalculated on each loop. 
+//Lastly I also saved the lenght of the array so that didn't need to be calculated each time the loop ran. 
+
 function updatePositions() {
   frame++; //frames
   window.performance.mark("mark_start_frame"); //timing API
@@ -528,7 +529,7 @@ document.addEventListener('DOMContentLoaded', function() {
   var cols = 8;
   var s = 256;
   var screenHeight= window.screen.height;
-  var rows = screenHeight/ 250;
+  var rows = screenHeight/ 200;
   var numberPizzas = rows*cols;
   console.log(numberPizzas);
   var elem;
